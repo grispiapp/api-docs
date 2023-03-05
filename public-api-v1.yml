@@ -118,6 +118,7 @@ components:
             - us.phone
           description: | 
             Talebe not ekleyen kullanıcıyı tanımlayan alan. En az bir alan gönderilmesi zorunludur. Birden fazla alan gönderildiğinde aşağıdaki öncelik sırasına göre kontrol yapılır.
+            ![Select ticket creator flow](createNewTicketFromApi.drawio.png)
             + `us.id:` Belirtilen id'ye sahip kullanıcı varsa kullanılır. Yoksa 404 hata kodu döner. Boş ise aşağıdaki telefon ve e-posta bilgileriyle yeni bir kullanıcı oluşturulur.
             + `us.email:` Belirtilen e-posta adresine sahip kullanıcı varsa kullanılır, yeni kullanıcı oluşturulmaz. `us.id` boşsa ama bu alan doluysa ve bu e-postalı kullanıcı sistemde yoksa bu e-postayla yeni bir kullanıcı oluşturulur.
             + `us.phone:` Belirtilen telefon numarasına sahip kullanıcı varsa kullanılır, yeni kullanıcı oluşturulmaz. `us.id` boşsa ama bu alan doluysa ve bu telefonlu kullanıcı sistemde yoksa bu telefonla yeni bir kullanıcı oluşturulur.
