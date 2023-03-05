@@ -118,6 +118,7 @@ components:
             - us.phone
           description: | 
             <p>Talebe not ekleyen kullanıcıyı tanımlayan alan. En az bir alan gönderilmesi zorunludur. Birden fazla alan gönderildiğinde aşağıdaki öncelik sırasına göre kontrol yapılır.</p>
+            
             ![Select ticket creator flow](createNewTicketFromApi.png)
 
             + `us.id:` Belirtilen id'ye sahip kullanıcı varsa kullanılır. Yoksa 404 hata kodu döner. Boş ise aşağıdaki telefon ve e-posta bilgileriyle yeni bir kullanıcı oluşturulur.
