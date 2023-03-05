@@ -1,0 +1,153 @@
+openapi: 3.0.3
+info:
+  title: Grispi Public API
+  description: Tüm isteklerde `tenantId` _header_'ı ve JWT _token_ gönderilmesi zorunludur.
+  version: 1.0.0
+servers:
+  - url: 'https://api.grispi.com/public/v1'
+tags:
+  - name: /tickets
+    description: Talep işlemleri
+paths:
+  /tickets:
+    post:
+      tags:
+        - /tickets
+      summary: Talep Oluşturma
+      description: | 
+        Talep oluşturma _endpoint_'i hem `application/json` hem de `multipart/form-data` istek kabul eder. Taleple birlikte ek dosya gönderilecekse `multipart/form-data` tercih edilmelidir.
+      parameters:
+        - in: header
+          name: tenantId
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TicketRequest'
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                ticketRequest:
+                  $ref: '#/components/schemas/TicketRequest'
+                attachments:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        201:
+          description: Başarılı talep oluşturma işlemi sonucunda oluşturulan talep döner.
+        400:
+          $ref: '#/components/schemas/ValidationError'
+components:
+  schemas:
+    TicketRequest:
+      type: object
+      required:
+        - comment
+        - fields
+      properties:
+        comment:
+          $ref: '#/components/schemas/CommentRequest'
+        fields:
+          type: array
+          description: |
+            + `ts.subject` alanının girilmesi zorunludur.
+            + `tu.restricted_field` alanının değeri `ts.assignee` olarak verilirse oluşacak talebin atanan alanı yalnızca adminler tarafından değiştirilebilecektir.
+          items:
+            $ref: '#/components/schemas/TicketField'
+          example:
+            [
+              {
+                "key": "ts.subject",
+                "value": "Lorem ipsum dolor sit amet"
+              },
+              {
+                "key": "tu.restricted_field",
+                "value": "ts.assignee"
+              }
+            ]
+    CommentRequest:
+      type: object
+      required:
+        - body
+        - publicVisible
+        - creator
+      properties:
+        body:
+          type: string
+          description: Talebe ilişkin not. Boş olamaz.
+          example: Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+        publicVisible:
+          type: boolean
+          description: Talebin sadece temsilcilere açık olup olmadığını belirler. Eğer `true` değeri gönderilirse eklenen not son kullanıcıya bildirim ile gönderilmez. Yalnızca temsilciler görür.
+          example: false
+        creator:
+          $ref: '#/components/schemas/Creator'
+    Creator:
+      type: array
+      items:
+        $ref: '#/components/schemas/UserIdentifierField'
+      example:
+        [
+          {
+            "key": "us.email",
+            "value": "adam@grr.la"
+          },
+          {
+            "key": "us.phone",
+            "value": "+90505559900"
+          }
+        ]
+    UserIdentifierField:
+      type: object
+      required:
+        - key
+        - value
+      properties:
+        key:
+          type: string
+          enum:
+            - us.id
+            - us.email
+            - us.phone
+          description: | 
+            Talepe not ekleyen kullanıcıyı tanımlayan alan. En az bir alan gönderilmesi zorunludur. Birden fazla alan gönderildiğinde yukarıdaki öncelik sırasına göre kontrol yapılır.
+            + `us.id:` Belirtilen id'ye sahip kullanıcı varsa kullanılır. Yoksa 404 hata kodu döner.
+            + `us.email:` Belirtilen e-posta adresine sahip kullanıcı varsa kullanılır. Yoksa `us.phone` kontrol edilir.
+            + `us.phone:` Belirtilen telefon numarasına sahip kullanıcı varsa kullanılır. Yoksa e-posta (belirtilmişse) adresi ve telefon numarası kullanılarak yeni kullanıcı oluşturulur.
+            Telefon numarası E.164 uluslararası formatta gönderilmelidir. (+905...)
+        value:
+          type: string
+          description: Tüm değerler String olarak gönderilmelidir.
+    TicketField:
+      type: object
+      required:
+        - key
+        - value
+      properties:
+        key:
+          type: string
+          description: |
+            Talep alanlarına eklenmiş aktif bir talep alanı.
+        value:
+          type: string
+          description: Tüm değerler String olarak gönderilmelidir.
+    ValidationError:
+      type: object
+      description: Hatalı istek durumunda döner.
+      properties:
+        message:
+          type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
