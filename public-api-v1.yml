@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Grispi Public API
-  description: Tüm isteklerde `tenantId` _header_'ı ve JWT _token_ gönderilmesi zorunludur.
+  description: Tüm isteklerde `tenantId` _header_'ı ve JWT gönderilmesi zorunludur.
   version: 1.0.0
 servers:
   - url: 'https://api.grispi.com/public/v1'
@@ -15,7 +15,7 @@ paths:
         - /tickets
       summary: Talep Oluşturma
       description: | 
-        Talep oluşturma _endpoint_'i hem `application/json` hem de `multipart/form-data` istek kabul eder. Taleple birlikte ek dosya gönderilecekse `multipart/form-data` tercih edilmelidir.
+        Talep oluşturma _endpoint_'i hem `application/json` hem de `multipart/form-data` istek kabul eder. Taleple birlikte ek dosya gönderilecekse `multipart/form-data` kullanılır.
       parameters:
         - in: header
           name: tenantId
@@ -81,11 +81,11 @@ components:
       properties:
         body:
           type: string
-          description: Talebe ilişkin not. Boş olamaz.
+          description: Talebin açıklaması. (yorum) Boş olamaz.
           example: Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
         publicVisible:
           type: boolean
-          description: Talebin sadece temsilcilere açık olup olmadığını belirler. Eğer `true` değeri gönderilirse eklenen not son kullanıcıya bildirim ile gönderilmez. Yalnızca temsilciler görür.
+          description: Yorumun sadece temsilcilere açık olup olmadığını belirler. Eğer `true` değeri gönderilirse eklenen yorum dahili not olur ve son kullanıcıya bildirim ile gönderilmez. Yalnızca temsilciler görür.
           example: false
         creator:
           $ref: '#/components/schemas/Creator'
@@ -117,11 +117,11 @@ components:
             - us.email
             - us.phone
           description: | 
-            Talepe not ekleyen kullanıcıyı tanımlayan alan. En az bir alan gönderilmesi zorunludur. Birden fazla alan gönderildiğinde yukarıdaki öncelik sırasına göre kontrol yapılır.
-            + `us.id:` Belirtilen id'ye sahip kullanıcı varsa kullanılır. Yoksa 404 hata kodu döner.
-            + `us.email:` Belirtilen e-posta adresine sahip kullanıcı varsa kullanılır. Yoksa `us.phone` kontrol edilir.
-            + `us.phone:` Belirtilen telefon numarasına sahip kullanıcı varsa kullanılır. Yoksa e-posta (belirtilmişse) adresi ve telefon numarası kullanılarak yeni kullanıcı oluşturulur.
-            Telefon numarası E.164 uluslararası formatta gönderilmelidir. (+905...)
+            Talebe not ekleyen kullanıcıyı tanımlayan alan. En az bir alan gönderilmesi zorunludur. Birden fazla alan gönderildiğinde aşağıdaki öncelik sırasına göre kontrol yapılır.
+            + `us.id:` Belirtilen id'ye sahip kullanıcı varsa kullanılır. Yoksa 404 hata kodu döner. Boş ise aşağıdaki telefon ve e-posta bilgileriyle yeni bir kullanıcı oluşturulur.
+            + `us.email:` Belirtilen e-posta adresine sahip kullanıcı varsa kullanılır, yeni kullanıcı oluşturulmaz. `us.id` boşsa ama bu alan doluysa ve bu e-postalı kullanıcı sistemde yoksa bu e-postayla yeni bir kullanıcı oluşturulur.
+            + `us.phone:` Belirtilen telefon numarasına sahip kullanıcı varsa kullanılır, yeni kullanıcı oluşturulmaz. `us.id` boşsa ama bu alan doluysa ve bu telefonlu kullanıcı sistemde yoksa bu telefonla yeni bir kullanıcı oluşturulur.
+            Telefon numarası E.164 uluslararası formatta (boşluksuz) gönderilmelidir. (+905...)
         value:
           type: string
           description: Tüm değerler String olarak gönderilmelidir.
