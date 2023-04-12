@@ -8,13 +8,16 @@ servers:
 tags:
   - name: /tickets
     description: Talep işlemleri
+externalDocs:
+  description: Gsocial ek dokümanı için bu bağlantıyı takip edebilirsiniz.
+  url: https://grispiapp.github.io/api-docs/gsocial
 paths:
   /tickets:
     post:
       tags:
         - /tickets
       summary: Talep Oluşturma
-      description: | 
+      description: |
         Talep oluşturma _endpoint_'i hem `application/json` hem de `multipart/form-data` istek kabul eder. Taleple birlikte ek dosya gönderilecekse `multipart/form-data` kullanılır.
       parameters:
         - in: header
@@ -116,7 +119,7 @@ components:
             - us.id
             - us.email
             - us.phone
-          description: | 
+          description: |
             <p>Talebe not ekleyen kullanıcıyı tanımlayan alan. En az bir alan gönderilmesi zorunludur. Birden fazla alan gönderildiğinde aşağıdaki öncelik sırasına göre kontrol yapılır.</p>
             
             ![Select ticket creator flow](createNewTicketFromApi.png)
@@ -154,3 +157,4 @@ components:
       bearerFormat: JWT
 security:
   - bearerAuth: []
+
