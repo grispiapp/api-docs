@@ -1,160 +1,332 @@
-openapi: 3.0.3
+---
+openapi: "3.0.3"
 info:
-  title: Grispi Public API
-  description: Tüm isteklerde `tenantId` _header_'ı ve JWT gönderilmesi zorunludur.
-  version: 1.0.0
+  title: "Grispi Public API"
+  description: "Tüm isteklerde `tenantId` _header_'ı ve JWT gönderilmesi zorunludur."
+  version: "1.0.0"
 servers:
-  - url: 'https://api.grispi.com/public/v1'
+- url: "https://api.grispi.com/public/v1"
 tags:
-  - name: /tickets
-    description: Talep işlemleri
+- name: tickets
+  description: Talep İşlemleri
+- name: customers
+  description: Müşteri İşlemleri
+- name: forms
+  description: Form İşlemleri
+- name: users
+  description: Kullanıcı İşlemleri
 externalDocs:
-  description: Gsocial ek dokümanı için bu bağlantıyı takip edebilirsiniz.
-  url: https://grispiapp.github.io/api-docs/gsocial
+  description: "Gsocial ek dokümanı için bu bağlantıyı takip edebilirsiniz."
+  url: "https://grispiapp.github.io/api-docs/gsocial"
 paths:
   /tickets:
     post:
       tags:
-        - /tickets
-      summary: Talep Oluşturma
-      description: |
-        Talep oluşturma _endpoint_'i hem `application/json` hem de `multipart/form-data` istek kabul eder. Taleple birlikte ek dosya gönderilecekse `multipart/form-data` kullanılır.
+      - "tickets"
+      summary: "Talep Oluşturma"
+      description: "Talep oluşturma _endpoint_'i hem `application/json` hem de `multipart/form-data`\
+        \ istek kabul eder. Taleple birlikte ek dosya gönderilecekse `multipart/form-data`\
+        \ kullanılır.\n"
       parameters:
-        - in: header
-          name: tenantId
-          schema:
-            type: string
-          required: true
+        - $ref: '#/components/parameters/tenantIdHeaderParam'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TicketRequest'
+              $ref: "#/components/schemas/TicketRequest"
           multipart/form-data:
             schema:
-              type: object
+              type: "object"
               properties:
                 ticketRequest:
-                  $ref: '#/components/schemas/TicketRequest'
+                  $ref: "#/components/schemas/TicketRequest"
                 attachments:
-                  type: array
+                  type: "array"
                   items:
-                    type: string
-                    format: binary
+                    type: "string"
+                    format: "binary"
       responses:
-        201:
-          description: Başarılı talep oluşturma işlemi sonucunda oluşturulan talep döner.
-        400:
-          $ref: '#/components/schemas/ValidationError'
+        "201":
+          description: "Başarılı talep oluşturma işlemi sonucunda oluşturulan talep\
+            \ döner."
+        "400":
+          $ref: "#/components/schemas/ValidationError"
+  /tickets/{key}:
+    parameters:
+      - in: "path"
+        name: "key"
+        required: true
+        schema:
+          type: "string"
+          example: "TICKET-1"
+        description: "Talep numarası"
+    patch:
+      tags:
+        - "tickets"
+      summary: "Talep Güncelleme"
+      description: "Talep güncelleme _endpoint_'i hem `application/json` hem de `multipart/form-data`\
+        \ istek kabul eder. Taleple birlikte ek dosya gönderilecekse `multipart/form-data`\
+        \ kullanılır.\n"
+      parameters:
+        - $ref: '#/components/parameters/tenantIdHeaderParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TicketRequest"
+          multipart/form-data:
+            schema:
+              type: "object"
+              properties:
+                ticketRequest:
+                  $ref: "#/components/schemas/TicketRequest"
+                attachments:
+                  type: "array"
+                  items:
+                    type: "string"
+                    format: "binary"
+      responses:
+        "200":
+          description: "Başarılı talep güncelleme işlemi sonucunda güncellenen talep\
+            \ döner."
+        "400":
+          $ref: "#/components/schemas/ValidationError"
+  /customers:
+    post:
+      tags:
+        - "customers"
+      summary: "Müşteri Oluşturma"
+      parameters:
+        - $ref: '#/components/parameters/tenantIdHeaderParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+      responses:
+        "201":
+          description: "Başarılı talep oluşturma işlemi sonucunda oluşturulan talep\
+            \ döner."
+        "400":
+          $ref: "#/components/schemas/ValidationError"
+  /customers/search:
+    get:
+      tags:
+        - "customers"
+      summary: "Müşteri Arama"
+      parameters:
+        - $ref: '#/components/parameters/tenantIdHeaderParam'
+        - in: "query"
+          name: "searchTerm"
+          schema:
+            type: "string"
+          required: true
+        - in: "query"
+          name: "orderBy"
+          schema:
+            type: "string"
+            default: "fullName"
+          description: "Sıralama için kullanılacak alan."
+        - in: "query"
+          name: "size"
+          schema:
+            type: "number"
+            default: 100
+          description: "Bir sayfada gösterilecek olan maksimum müşteri sayısı."
+        - in: "query"
+          name: "page"
+          schema:
+            type: "number"
+            default: 0
+          description: "Sayfa numarası. 0'dan başlar."
+      responses:
+        200:
+          description: "Başarılı yanıt"
+  /forms:
+    get:
+      tags:
+        - "forms"
+      summary: "Form Listeleme"
+      description: "Aktif formlar listelenir."
+      parameters:
+        - $ref: '#/components/parameters/tenantIdHeaderParam'
+      responses:
+        200:
+          description: "Başarılı yanıt"
+  /users/{id}/tickets:
+    parameters:
+      - in: "path"
+        name: "id"
+        required: true
+        schema:
+          type: "integer"
+        description: "User ID"
+    get:
+      tags:
+        - "users"
+      summary: "Kullanıcı taleplerini listeleme"
+      description: "Kullanıcının talep eden olduğu kapanmamış talepler listelenir. En fazla 100 talep listelenir."
+      responses:
+        200:
+          description: "Başarılı yanıt"
 components:
   schemas:
     TicketRequest:
-      type: object
+      type: "object"
       required:
-        - comment
-        - fields
+      - "comment"
+      - "fields"
       properties:
         comment:
-          $ref: '#/components/schemas/CommentRequest'
+          $ref: "#/components/schemas/CommentRequest"
         fields:
-          type: array
-          description: |
-            + `ts.subject` alanının girilmesi zorunludur.
-            + `tu.restricted_field` alanının değeri `ts.assignee` olarak verilirse oluşacak talebin atanan alanı yalnızca adminler tarafından değiştirilebilecektir.
+          type: "array"
+          description: "+ `ts.subject` alanının girilmesi zorunludur.\n+ `tu.restricted_field`\
+            \ alanının değeri `ts.assignee` olarak verilirse oluşacak talebin atanan\
+            \ alanı yalnızca adminler tarafından değiştirilebilecektir.\n"
           items:
-            $ref: '#/components/schemas/TicketField'
+            $ref: "#/components/schemas/TicketField"
           example:
-            [
-              {
-                "key": "ts.subject",
-                "value": "Lorem ipsum dolor sit amet"
-              },
-              {
-                "key": "tu.restricted_field",
-                "value": "ts.assignee"
-              }
-            ]
+          - key: "ts.subject"
+            value: "Lorem ipsum dolor sit amet"
+          - key: "tu.restricted_field"
+            value: "ts.assignee"
     CommentRequest:
-      type: object
+      type: "object"
       required:
-        - body
-        - publicVisible
-        - creator
+      - "body"
+      - "publicVisible"
+      - "creator"
       properties:
         body:
-          type: string
-          description: Talebin açıklaması. (yorum) Boş olamaz.
-          example: Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+          type: "string"
+          description: "Talebin açıklaması. (yorum) Boş olamaz."
+          example: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam\
+            \ nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,\
+            \ sed diam voluptua."
         publicVisible:
-          type: boolean
-          description: Yorumun sadece temsilcilere açık olup olmadığını belirler. Eğer `true` değeri gönderilirse eklenen yorum dahili not olur ve son kullanıcıya bildirim ile gönderilmez. Yalnızca temsilciler görür.
+          type: "boolean"
+          description: "Yorumun sadece temsilcilere açık olup olmadığını belirler.\
+            \ Eğer `true` değeri gönderilirse eklenen yorum dahili not olur ve son\
+            \ kullanıcıya bildirim ile gönderilmez. Yalnızca temsilciler görür."
           example: false
         creator:
-          $ref: '#/components/schemas/Creator'
+          $ref: "#/components/schemas/Creator"
     Creator:
-      type: array
+      type: "array"
       items:
-        $ref: '#/components/schemas/UserIdentifierField'
+        $ref: "#/components/schemas/UserIdentifierField"
       example:
-        [
-          {
-            "key": "us.email",
-            "value": "adam@grr.la"
-          },
-          {
-            "key": "us.phone",
-            "value": "+90505559900"
-          }
-        ]
+      - key: "us.email"
+        value: "example@example.com"
+      - key: "us.phone"
+        value: "+905055555555"
     UserIdentifierField:
-      type: object
+      type: "object"
       required:
-        - key
-        - value
+      - "key"
+      - "value"
       properties:
         key:
-          type: string
+          type: "string"
           enum:
-            - us.id
-            - us.email
-            - us.phone
-          description: |
-            <p>Talebe not ekleyen kullanıcıyı tanımlayan alan. En az bir alan gönderilmesi zorunludur. Birden fazla alan gönderildiğinde aşağıdaki öncelik sırasına göre kontrol yapılır.</p>
-            
-            ![Select ticket creator flow](createNewTicketFromApi.png)
-
-            + `us.id:` Belirtilen id'ye sahip kullanıcı varsa kullanılır. Yoksa 404 hata kodu döner. Boş ise aşağıdaki telefon ve e-posta bilgileriyle yeni bir kullanıcı oluşturulur.
-            + `us.email:` Belirtilen e-posta adresine sahip kullanıcı varsa kullanılır, yeni kullanıcı oluşturulmaz. `us.id` boşsa ama bu alan doluysa ve bu e-postalı kullanıcı sistemde yoksa bu e-postayla yeni bir kullanıcı oluşturulur.
-            + `us.phone:` Belirtilen telefon numarasına sahip kullanıcı varsa kullanılır, yeni kullanıcı oluşturulmaz. `us.id` boşsa ama bu alan doluysa ve bu telefonlu kullanıcı sistemde yoksa bu telefonla yeni bir kullanıcı oluşturulur.
-            Telefon numarası E.164 uluslararası formatta (boşluksuz) gönderilmelidir. (+905...)
+          - "us.id"
+          - "us.email"
+          - "us.phone"
+          description: "<p>Talebe not ekleyen kullanıcıyı tanımlayan alan. En az bir\
+            \ alan gönderilmesi zorunludur. Birden fazla alan gönderildiğinde aşağ\
+            ıdaki öncelik sırasına göre kontrol yapılır.</p>\n\n![Select ticket creator\
+            \ flow](createNewTicketFromApi.png)\n+ `us.id:` Belirtilen id'ye sahip\
+            \ kullanıcı varsa kullanılır. Yoksa 404 hata kodu döner. Boş ise aşağı\
+            daki telefon ve e-posta bilgileriyle yeni bir kullanıcı oluşturulur.\n\
+            + `us.email:` Belirtilen e-posta adresine sahip kullanıcı varsa kullanı\
+            lır, yeni kullanıcı oluşturulmaz. `us.id` boşsa ama bu alan doluysa ve\
+            \ bu e-postalı kullanıcı sistemde yoksa bu e-postayla yeni bir kullanı\
+            cı oluşturulur.\n+ `us.phone:` Belirtilen telefon numarasına sahip kullanı\
+            cı varsa kullanılır, yeni kullanıcı oluşturulmaz. `us.id` boşsa ama bu\
+            \ alan doluysa ve bu telefonlu kullanıcı sistemde yoksa bu telefonla yeni\
+            \ bir kullanıcı oluşturulur.\nTelefon numarası E.164 uluslararası formatta\
+            \ (boşluksuz) gönderilmelidir. (+905...)\n"
         value:
-          type: string
-          description: Tüm değerler String olarak gönderilmelidir.
+          type: "string"
+          description: "Tüm değerler String olarak gönderilmelidir."
     TicketField:
-      type: object
+      type: "object"
       required:
-        - key
-        - value
+      - "key"
+      - "value"
       properties:
         key:
-          type: string
-          description: |
-            Talep alanlarına eklenmiş aktif bir talep alanı.
+          type: "string"
+          description: "Talep alanlarına eklenmiş aktif bir talep alanı.\n"
         value:
-          type: string
-          description: Tüm değerler String olarak gönderilmelidir.
+          type: "string"
+          description: "Tüm değerler String olarak gönderilmelidir."
     ValidationError:
-      type: object
-      description: Hatalı istek durumunda döner.
+      type: "object"
+      description: "Hatalı istek durumunda döner."
       properties:
         message:
-          type: string
+          type: "string"
+    UserRequest:
+      type: "object"
+      description: "Alanlardan hiçbiri zorunlu değildir. `email`, `phone`, `fullName` alanlarından en az birinin gönderilmesi gerekmektedir. \n Gsocial için ek dokümanı inceleyiniz."
+      properties:
+        email:
+          type: "string"
+          description: "E-posta"
+          example: "example@example.com"
+        phone:
+          type: "string"
+          description: "Telefon numarası E.164 uluslararası formatta (boşluksuz) gönderilmelidir. (+905...)"
+          example: "+905055555555"
+        fullName:
+          type: "string"
+          description: "İsim soyisim"
+          example: "James Gosling"
+        organization:
+          type: "string"
+          description: "Organizasyon ismi."
+          example: "Acme"
+        tags:
+          type: "array"
+          description: "Etiketler"
+          items:
+            type: "string"
+          example:
+            - "müşteri"
+            - "istanbul"
+        fields:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/UserField"
+    UserField:
+      type: "object"
+      required:
+        - "key"
+        - "value"
+      properties:
+        key:
+          type: "string"
+          example: "us.randevu_tarihi"
+        value:
+          type: "string"
+          description: "Tüm değerler String olarak gönderilmelidir."
+          example: "1683208800000"
+  parameters:
+    tenantIdHeaderParam:
+      in: "header"
+      name: "tenantId"
+      schema:
+        type: "string"
+      required: true
   securitySchemes:
     bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
+      type: "http"
+      scheme: "bearer"
+      bearerFormat: "JWT"
 security:
-  - bearerAuth: []
-
+- bearerAuth: []
