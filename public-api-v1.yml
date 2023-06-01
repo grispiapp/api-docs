@@ -5,24 +5,38 @@ info:
   description: "Tüm isteklerde `tenantId` _header_'ı ve JWT gönderilmesi zorunludur."
   version: "1.0.0"
 servers:
-- url: "https://api.grispi.com/public/v1"
+  - url: "https://api.grispi.com/public/v1"
 tags:
-- name: tickets
-  description: Talep İşlemleri
-- name: customers
-  description: Müşteri İşlemleri
-- name: forms
-  description: Form İşlemleri
-- name: users
-  description: Kullanıcı İşlemleri
+  - name: tickets
+    description: Talep İşlemleri
+  - name: customers
+    description: Müşteri İşlemleri
+  - name: forms
+    description: Form İşlemleri
+  - name: users
+    description: Kullanıcı İşlemleri
+  - name: ping
+    description: Ping
 externalDocs:
   description: "Gsocial ek dokümanı için bu bağlantıyı takip edebilirsiniz."
   url: "https://grispiapp.github.io/api-docs/gsocial"
 paths:
+  /ping:
+    get:
+      tags:
+        - "ping"
+      summary: "Ping"
+      parameters:
+        - $ref: '#/components/parameters/tenantIdHeaderParam'
+      responses:
+        "204":
+          description: "Geçerli token ile istek gönderildiğinde döner."
+        "401":
+          description: "Geçersiz token ile istek gönderildiğinde döner."
   /tickets:
     post:
       tags:
-      - "tickets"
+        - "tickets"
       summary: "Talep Oluşturma"
       description: "Talep oluşturma _endpoint_'i hem `application/json` hem de `multipart/form-data`\
         \ istek kabul eder. Taleple birlikte ek dosya gönderilecekse `multipart/form-data`\
@@ -177,8 +191,8 @@ components:
     TicketRequest:
       type: "object"
       required:
-      - "comment"
-      - "fields"
+        - "comment"
+        - "fields"
       properties:
         comment:
           $ref: "#/components/schemas/CommentRequest"
@@ -190,16 +204,16 @@ components:
           items:
             $ref: "#/components/schemas/TicketField"
           example:
-          - key: "ts.subject"
-            value: "Lorem ipsum dolor sit amet"
-          - key: "tu.restricted_field"
-            value: "ts.assignee"
+            - key: "ts.subject"
+              value: "Lorem ipsum dolor sit amet"
+            - key: "tu.restricted_field"
+              value: "ts.assignee"
     CommentRequest:
       type: "object"
       required:
-      - "body"
-      - "publicVisible"
-      - "creator"
+        - "body"
+        - "publicVisible"
+        - "creator"
       properties:
         body:
           type: "string"
@@ -220,22 +234,22 @@ components:
       items:
         $ref: "#/components/schemas/UserIdentifierField"
       example:
-      - key: "us.email"
-        value: "example@example.com"
-      - key: "us.phone"
-        value: "+905055555555"
+        - key: "us.email"
+          value: "example@example.com"
+        - key: "us.phone"
+          value: "+905055555555"
     UserIdentifierField:
       type: "object"
       required:
-      - "key"
-      - "value"
+        - "key"
+        - "value"
       properties:
         key:
           type: "string"
           enum:
-          - "us.id"
-          - "us.email"
-          - "us.phone"
+            - "us.id"
+            - "us.email"
+            - "us.phone"
           description: "<p>Talebe not ekleyen kullanıcıyı tanımlayan alan. En az bir\
             \ alan gönderilmesi zorunludur. Birden fazla alan gönderildiğinde aşağ\
             ıdaki öncelik sırasına göre kontrol yapılır.</p>\n\n![Select ticket creator\
@@ -256,8 +270,8 @@ components:
     TicketField:
       type: "object"
       required:
-      - "key"
-      - "value"
+        - "key"
+        - "value"
       properties:
         key:
           type: "string"
@@ -329,4 +343,4 @@ components:
       scheme: "bearer"
       bearerFormat: "JWT"
 security:
-- bearerAuth: []
+  - bearerAuth: []
