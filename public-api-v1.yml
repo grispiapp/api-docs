@@ -250,20 +250,10 @@ components:
             - "us.id"
             - "us.email"
             - "us.phone"
-          description: "<p>Talebe not ekleyen kullanıcıyı tanımlayan alan. En az bir\
-            \ alan gönderilmesi zorunludur. Birden fazla alan gönderildiğinde aşağ\
-            ıdaki öncelik sırasına göre kontrol yapılır.</p>\n\n![Select ticket creator\
-            \ flow](createNewTicketFromApi.png)\n+ `us.id:` Belirtilen id'ye sahip\
-            \ kullanıcı varsa kullanılır. Yoksa 404 hata kodu döner. Boş ise aşağı\
-            daki telefon ve e-posta bilgileriyle yeni bir kullanıcı oluşturulur.\n\
-            + `us.email:` Belirtilen e-posta adresine sahip kullanıcı varsa kullanı\
-            lır, yeni kullanıcı oluşturulmaz. `us.id` boşsa ama bu alan doluysa ve\
-            \ bu e-postalı kullanıcı sistemde yoksa bu e-postayla yeni bir kullanı\
-            cı oluşturulur.\n+ `us.phone:` Belirtilen telefon numarasına sahip kullanı\
-            cı varsa kullanılır, yeni kullanıcı oluşturulmaz. `us.id` boşsa ama bu\
-            \ alan doluysa ve bu telefonlu kullanıcı sistemde yoksa bu telefonla yeni\
-            \ bir kullanıcı oluşturulur.\nTelefon numarası E.164 uluslararası formatta\
-            \ (boşluksuz) gönderilmelidir. (+905...)\n"
+          description: "<p>Talebe not ekleyen kullanıcıyı tanımlayan alan. En az bir alan gönderilmesi zorunludur. \
+            Gönderilen alanların kullanımı aşağıdaki diyagramda özetlenmiştir. Telefon numarası E.164 uluslararası formatta\
+            (boşluksuz) gönderilmelidir. (+905...)\n</p>\n\n
+            ![Ticket creator flow](createNewTicketFromApi.png)\n"
         value:
           type: "string"
           description: "Tüm değerler String olarak gönderilmelidir."
@@ -343,4 +333,4 @@ components:
       scheme: "bearer"
       bearerFormat: "JWT"
 security:
-  - bearerAuth: []
+  - bearerAuth: [ ]
