@@ -15,6 +15,8 @@ tags:
     description: Form İşlemleri
   - name: users
     description: Kullanıcı İşlemleri
+  - name: fields
+    description: Talep Alanları İşlemleri
   - name: ping
     description: Ping
 externalDocs:
@@ -186,6 +188,70 @@ paths:
       responses:
         200:
           description: "Başarılı yanıt"
+  /fields:
+    get:
+      tags:
+        - "fields"
+      summary: "Talep Alanlarını Listeler"
+      parameters:
+        - $ref: '#/components/parameters/tenantIdHeaderParam'
+      responses:
+        200:
+          description: "Başarılı yanıt"
+  /fields/{key}/values:
+    get:
+      tags:
+        - fields
+      summary: "Talep Alanına Ait Değerlerde Arama Yapar"
+      description: "Verilen alan anahtarına ait değerlerde arama yapar ve listeler."
+      parameters:
+        - $ref: '#/components/parameters/tenantIdHeaderParam'
+        - in: path
+          name: key
+          required: true
+          schema:
+            type: "string"
+            example: "ts.type"
+          description: "Alan anahtarı"
+        - in: query
+          name: searchTerm
+          required: true
+          schema:
+            type: "string"
+            example: "pro"
+          description: "Arama terimi"
+      responses:
+        200:
+          description: "Başarılı yanıt"
+        400:
+          $ref: "#/components/schemas/ValidationError"
+  /fields/{key}/options:
+    get:
+      tags:
+        - fields
+      summary: "Talep Alanını Seçeneklerini Listeler"
+      description: "Verilen alan anahtarına ait bütün seçenekleri listeler. Eğer _ids_ parametresi gönderilirse sadece belirtilen id'lerin seçeneklerini listeler."
+      parameters:
+        - $ref: '#/components/parameters/tenantIdHeaderParam'
+        - in: path
+          name: key
+          required: true
+          schema:
+            type: "string"
+            example: "ts.type"
+          description: "Alan anahtarı"
+        - in: query
+          name: ids
+          required: false
+          schema:
+            type: "string"
+            example: "1,2,3,100,101"
+          description: "ID'ler virgülle ayrılmış olmalıdır. Eğer gönderilen _id_ bulunamazsa yok sayılır."
+      responses:
+        200:
+          description: Başarılı yanıt
+        400:
+          $ref: "#/components/schemas/ValidationError"
 components:
   schemas:
     TicketRequest:
