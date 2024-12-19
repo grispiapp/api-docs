@@ -17,6 +17,8 @@ tags:
     description: Kullanıcı İşlemleri
   - name: fields
     description: Talep Alanları İşlemleri
+  - name: merge
+    description: Birleştirme İşlemleri
   - name: ping
     description: Ping
 externalDocs:
@@ -192,7 +194,7 @@ paths:
     get:
       tags:
         - "fields"
-      summary: "Talep Alanlarını Listeler"
+      summary: "Talep Alanlarını Listeleme"
       parameters:
         - $ref: '#/components/parameters/tenantIdHeaderParam'
       responses:
@@ -202,7 +204,7 @@ paths:
     get:
       tags:
         - fields
-      summary: "Talep Alanına Ait Değerlerde Arama Yapar"
+      summary: "Talep Alanına Ait Değerlerde Arama Yapma"
       description: "Verilen alan anahtarına ait değerlerde arama yapar ve listeler."
       parameters:
         - $ref: '#/components/parameters/tenantIdHeaderParam'
@@ -229,7 +231,7 @@ paths:
     get:
       tags:
         - fields
-      summary: "Talep Alanını Seçeneklerini Listeler"
+      summary: "Talep Alanını Seçeneklerini Listeleme"
       description: "Verilen alan anahtarına ait bütün seçenekleri listeler. Eğer _ids_ parametresi gönderilirse sadece belirtilen id'lerin seçeneklerini listeler."
       parameters:
         - $ref: '#/components/parameters/tenantIdHeaderParam'
@@ -251,6 +253,25 @@ paths:
         200:
           description: Başarılı yanıt
         400:
+          $ref: "#/components/schemas/ValidationError"
+  /merge/ticket:
+    post:
+      tags:
+        - merge
+      summary: "Talep Birleştirme"
+      description: "Anahtarları verilen iki talebi birleştirir."
+      parameters:
+        - $ref: '#/components/parameters/tenantIdHeaderParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TicketMergeRequest'
+      responses:
+        "204":
+          description: "Başarılı talep birleştirme işlemi sonucunda döner."
+        "400":
           $ref: "#/components/schemas/ValidationError"
 components:
   schemas:
@@ -386,6 +407,18 @@ components:
           type: "string"
           description: "Tüm değerler String olarak gönderilmelidir."
           example: "1683208800000"
+    TicketMergeRequest:
+      type: "object"
+      required:
+        - "sourceKey"
+        - "targetKey"
+      properties:
+        sourceKey:
+          type: "string"
+          example: "TICKET-1"
+        targetKey:
+          "type": "string"
+          example: "TICKET-2"
   parameters:
     tenantIdHeaderParam:
       in: "header"
