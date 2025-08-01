@@ -285,16 +285,12 @@ components:
           $ref: "#/components/schemas/CommentRequest"
         fields:
           type: "array"
-          description: "+ `ts.subject` alanının girilmesi zorunludur.\n+ `tu.restricted_field`\
-            \ alanının değeri `ts.assignee` olarak verilirse oluşacak talebin atanan\
-            \ alanı yalnızca adminler tarafından değiştirilebilecektir.\n"
+          description: "+ `ts.subject` alanının girilmesi zorunludur.\n+"
           items:
             $ref: "#/components/schemas/TicketField"
           example:
             - key: "ts.subject"
               value: "Lorem ipsum dolor sit amet"
-            - key: "tu.restricted_field"
-              value: "ts.assignee"
     CommentRequest:
       type: "object"
       required:
