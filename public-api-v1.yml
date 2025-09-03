@@ -5,7 +5,7 @@ info:
   description: "Tüm isteklerde `tenantId` _header_'ı ve JWT gönderilmesi zorunludur."
   version: "1.0.0"
 servers:
-  - url: "http://localhost:8080/public/v1"
+  - url: "https://api.grispi.com/public/v1"
 tags:
   - name: tickets
     description: Talep İşlemleri
