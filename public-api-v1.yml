@@ -5,7 +5,7 @@ info:
   description: "Tüm isteklerde `tenantId` _header_'ı ve JWT gönderilmesi zorunludur."
   version: "1.0.0"
 servers:
-  - url: "https://api.grispi.com/public/v1"
+  - url: "http://localhost:8080/public/v1"
 tags:
   - name: tickets
     description: Talep İşlemleri
@@ -16,7 +16,7 @@ tags:
   - name: users
     description: Kullanıcı İşlemleri
   - name: fields
-    description: Talep Alanları İşlemleri
+    description: Alan İşlemleri
   - name: merge
     description: Birleştirme İşlemleri
   - name: ping
@@ -190,7 +190,7 @@ paths:
       responses:
         200:
           description: "Başarılı yanıt"
-  /fields:
+  /fields?type=TICKET:
     get:
       tags:
         - "fields"
@@ -200,11 +200,37 @@ paths:
       responses:
         200:
           description: "Başarılı yanıt"
+        400:
+          $ref: "#/components/schemas/ValidationError"
+  /fields?type=USER:
+    get:
+      tags:
+        - "fields"
+      summary: "Kullanıcı Alanlarını Listeleme"
+      parameters:
+        - $ref: '#/components/parameters/tenantIdHeaderParam'
+      responses:
+        200:
+          description: "Başarılı yanıt"
+        400:
+          $ref: "#/components/schemas/ValidationError"
+  /fields?type=ORGANIZATION:
+    get:
+      tags:
+        - "fields"
+      summary: "Organizasyon Alanlarını Listeleme"
+      parameters:
+        - $ref: '#/components/parameters/tenantIdHeaderParam'
+      responses:
+        200:
+          description: "Başarılı yanıt"
+        400:
+          $ref: "#/components/schemas/ValidationError"
   /fields/{key}/values:
     get:
       tags:
         - fields
-      summary: "Talep Alanına Ait Değerlerde Arama Yapma"
+      summary: "Alan Anahtarına Ait Değerlerde Arama Yapma"
       description: "Verilen alan anahtarına ait değerlerde arama yapar ve listeler."
       parameters:
         - $ref: '#/components/parameters/tenantIdHeaderParam'
@@ -231,7 +257,7 @@ paths:
     get:
       tags:
         - fields
-      summary: "Talep Alanını Seçeneklerini Listeleme"
+      summary: "Alan Anahtarı Seçeneklerini Listeleme"
       description: "Verilen alan anahtarına ait bütün seçenekleri listeler. Eğer _ids_ parametresi gönderilirse sadece belirtilen id'lerin seçeneklerini listeler."
       parameters:
         - $ref: '#/components/parameters/tenantIdHeaderParam'
