@@ -231,7 +231,7 @@ paths:
     get:
       tags:
         - fields
-      summary: "Talep Alanını Seçeneklerini Listeleme"
+      summary: "Talep Alanının Seçeneklerini Listeleme"
       description: "Verilen alan anahtarına ait bütün seçenekleri listeler. Eğer _ids_ parametresi gönderilirse sadece belirtilen id'lerin seçeneklerini listeler."
       parameters:
         - $ref: '#/components/parameters/tenantIdHeaderParam'
@@ -254,6 +254,51 @@ paths:
           description: Başarılı yanıt
         400:
           $ref: "#/components/schemas/ValidationError"
+  /fields/{key}/categories:
+    get:
+      tags: 
+        - fields
+      summary: Kategori Talep Alanının Kategorilerini Listeleme
+      description: Kategori tipindeki talep alanına ait ana kategorileri listeler.
+      parameters:
+        - $ref: '#/components/parameters/tenantIdHeaderParam'
+        - in: path
+          name: key
+          required: true
+          schema:
+            type: "string"
+            example: "ts.type"
+          description: "Alan anahtarı"
+      responses:
+        200:
+          description: Başarılı yanıt
+          
+  /fields/{key}/categories/{parentId}:
+    get:
+      tags: 
+        - fields
+      summary: Kategori Talep Alanının Alt Kategorilerini Listeleme
+      description: Kategori tipindeki talep alanına ait id'si verilen kategorinin alt kategorilerini listeler. 
+      parameters:
+        - $ref: '#/components/parameters/tenantIdHeaderParam'
+        - in: path
+          name: key
+          required: true
+          schema:
+            type: "string"
+            example: "ts.type"
+          description: "Alan anahtarı"
+        - in: path
+          name: parentId
+          required: true
+          schema:
+            type: "integer"
+            example: "1"
+          description: "Üst kategori id'si."
+      responses:
+        200:
+          description: Başarılı yanıt
+
   /merge/ticket:
     post:
       tags:
