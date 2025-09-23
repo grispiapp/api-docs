@@ -277,7 +277,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/CategoryNodes'
           
-  /fields/{key}/categories/{parentId}:
+  /fields/{key}/categories/{parentId}/categories:
     get:
       tags: 
         - fields
