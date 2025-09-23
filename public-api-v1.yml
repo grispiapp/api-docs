@@ -259,7 +259,7 @@ paths:
       tags: 
         - fields
       summary: Kategori Talep Alanının Kategorilerini Listeleme
-      description: Kategori tipindeki talep alanına ait ana kategorileri listeler.
+      description: Kategori tipindeki talep alanına ait ana kategorileri listeler. Talep oluştururken ve güncellerken `fullIdPath` parametresi `value` olarak gönderilmelidir.
       parameters:
         - $ref: '#/components/parameters/tenantIdHeaderParam'
         - in: path
@@ -272,13 +272,17 @@ paths:
       responses:
         200:
           description: Başarılı yanıt
+          content: 
+            application/json: 
+              schema:
+                $ref: '#/components/schemas/CategoryNodes'
           
   /fields/{key}/categories/{parentId}:
     get:
       tags: 
         - fields
       summary: Kategori Talep Alanının Alt Kategorilerini Listeleme
-      description: Kategori tipindeki talep alanına ait id'si verilen kategorinin alt kategorilerini listeler. 
+      description: Kategori tipindeki talep alanına ait id'si verilen kategorinin alt kategorilerini listeler. Talep oluştururken ve güncellerken `fullIdPath` parametresi `value` olarak gönderilmelidir.
       parameters:
         - $ref: '#/components/parameters/tenantIdHeaderParam'
         - in: path
@@ -298,6 +302,10 @@ paths:
       responses:
         200:
           description: Başarılı yanıt
+          content: 
+            application/json: 
+              schema:
+                $ref: '#/components/schemas/CategoryNodes'
 
   /merge/ticket:
     post:
@@ -460,6 +468,44 @@ components:
         targetKey:
           "type": "string"
           example: "TICKET-2"
+    CategoryNode:
+      type: "object"
+      properties:
+        id:
+          type: "number"
+          example: 1
+        label:
+          type: "string"
+          example: "Finance"
+        level:
+          type: "integer"
+          example: 1
+        fullIdPath:
+          type: "string"
+          example: "1,2,3,4,5"
+        leaf:
+          type: "boolean"
+          example: false
+    CategoryNodes:
+      type: "array"
+      items: 
+        type: "object"
+        properties:
+          id:
+            type: "number"
+            example: 1
+          label:
+            type: "string"
+            example: "Finance"
+          level:
+            type: "integer"
+            example: 1
+          fullIdPath:
+            type: "string"
+            example: "1,2,3,4,5"
+          leaf:
+            type: "boolean"
+            example: false
   parameters:
     tenantIdHeaderParam:
       in: "header"
