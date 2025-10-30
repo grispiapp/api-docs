@@ -21,6 +21,8 @@ tags:
     description: Birleştirme İşlemleri
   - name: ping
     description: Ping
+  - name: digest
+    description: Özet İşlemleri
 externalDocs:
   description: "Gsocial ek dokümanı için bu bağlantıyı takip edebilirsiniz."
   url: "https://grispiapp.github.io/api-docs/gsocial"
@@ -352,6 +354,43 @@ paths:
           description: "Başarılı talep birleştirme işlemi sonucunda döner."
         "400":
           $ref: "#/components/schemas/ValidationError"
+  /digests/{key}/comments:
+      parameters:
+        - in: "path"
+          name: "key"
+          required: true
+          schema:
+            type: "string"
+            example: "TICKET-1"
+          description: "Talep anahtarı"
+      get:
+        tags:
+          - digest
+        summary: Yorum Özeti
+        description: > 
+          Talebe ait `public` yorumları yalnızca temel alanlarıyla listeler.
+        parameters:
+          - in: "query"
+            name: "size"
+            schema:
+              type: "number"
+              default: 10
+              maximum: 15
+            description: "Bir sayfada gösterilecek olan maksimum yorum sayısı. Maksimum: 15."
+          - in: "query"
+            name: "page"
+            schema:
+              type: "number"
+              default: 0
+            description: "Sayfa numarası. 0'dan başlar."
+        responses:
+          "200":
+            description: "Yorum listesi."
+            content: 
+              application/json:
+                schema: 
+                  $ref: "#/components/schemas/PagedCommentDigest"
+
 components:
   schemas:
     TicketRequest:
@@ -532,6 +571,51 @@ components:
           leaf:
             type: "boolean"
             example: false
+    PagedCommentDigest:
+      type: "object"
+      properties:
+        content:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              body:
+                type: "string"
+                example: "Lorem Ipsum"
+              channel:
+                type: "string"
+                example: "WEB"
+              createdAt:
+                type: "number"
+                description: "Epoch ms."
+                example: 1761822103000
+              creator:
+                type: "object"
+                properties:
+                  id:
+                    type: "number"
+                    example: 123
+                  role:
+                    type: "string"
+                    example: "ROLE_AGENT"
+                    enum:
+                      - "ROLE_END_USER"
+                      - "ROLE_AGENT"
+                      - "ROLE_ADMIN"
+                      - "ROLE_INTEGRATION"
+        totalSize:
+          type: number
+        totalPages:
+          type: number
+        size:
+          type: number
+        offset:
+          type: number
+        numberOfElements:
+          type: number
+        pageNumber:
+          type: number
+
   parameters:
     tenantIdHeaderParam:
       in: "header"
