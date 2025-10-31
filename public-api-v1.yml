@@ -354,7 +354,7 @@ paths:
           description: "Başarılı talep birleştirme işlemi sonucunda döner."
         "400":
           $ref: "#/components/schemas/ValidationError"
-  /digests/{key}/comments:
+  /digests/tickets/{key}/comments:
       parameters:
         - in: "path"
           name: "key"
