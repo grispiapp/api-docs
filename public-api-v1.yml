@@ -178,6 +178,7 @@ paths:
           description: "Başarılı yanıt"
   /users/{id}/tickets:
     parameters:
+      - $ref: '#/components/parameters/tenantIdHeaderParam'
       - in: "path"
         name: "id"
         required: true
@@ -370,6 +371,7 @@ paths:
         description: > 
           Talebe ait `public` yorumları yalnızca temel alanlarıyla listeler.
         parameters:
+          - $ref: '#/components/parameters/tenantIdHeaderParam'
           - in: "query"
             name: "size"
             schema:
