@@ -23,6 +23,8 @@ tags:
     description: Ping
   - name: digest
     description: Özet İşlemleri
+  - name: calls
+    description: Çağrı İşlemleri
 externalDocs:
   description: "Gsocial ek dokümanı için bu bağlantıyı takip edebilirsiniz."
   url: "https://grispiapp.github.io/api-docs/gsocial"
@@ -392,6 +394,29 @@ paths:
               application/json:
                 schema: 
                   $ref: "#/components/schemas/PagedCommentDigest"
+  /calls/{callId}:
+    parameters:
+      - $ref: '#/components/parameters/tenantIdHeaderParam'
+      - in: "path"
+        name: "callId"
+        required: true
+        schema:
+          type: "string"
+        description: "Çağrı ID'si (santral tarafındaki `callId`)"
+    get:
+      tags:
+        - "calls"
+      summary: "Çağrı Detayı"
+      description: "`callId` ile çağrı detayları getirilir."
+      responses:
+        "200":
+          description: "Başarılı yanıt"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Call"
+        "404":
+          description: "Verilen `callId` ile çağrı bulunamadığında döner."
 
 components:
   schemas:
@@ -617,6 +642,74 @@ components:
           type: number
         pageNumber:
           type: number
+    Call:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          example: 123
+        callId:
+          type: "string"
+        createdAt:
+          type: "integer"
+          description: "Epoch ms."
+          example: 1761822103000
+        agentMail:
+          type: "string"
+          example: "agent@example.com"
+        waitDuration:
+          type: "integer"
+        callDuration:
+          type: "integer"
+        localHangup:
+          type: "boolean"
+        disposition:
+          type: "string"
+          enum:
+            - "NO_ANSWER"
+            - "CONGESTION"
+            - "FAILED"
+            - "BUSY"
+            - "ANSWERED"
+        direction:
+          type: "string"
+          enum:
+            - "INBOUND"
+            - "OUTBOUND"
+        totalHoldDuration:
+          type: "integer"
+        holdCount:
+          type: "integer"
+        queue:
+          type: "string"
+        source:
+          type: "string"
+          example: "05551234567"
+        destination:
+          type: "string"
+        recording:
+          type: "object"
+          nullable: true
+          properties:
+            id:
+              type: "integer"
+            filename:
+              type: "string"
+            mimeType:
+              type: "string"
+              example: "audio/mpeg"
+            objectUrl:
+              type: "string"
+        callEndedAt:
+          type: "integer"
+          nullable: true
+          description: "Epoch ms."
+          example: 1761822163000
+        ticketKey:
+          type: "string"
+          nullable: true
+          description: "Çağrının bağlı olduğu talebin anahtarı."
+          example: "TICKET-1"
 
   parameters:
     tenantIdHeaderParam:
